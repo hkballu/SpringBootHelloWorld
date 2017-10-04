@@ -1,0 +1,76 @@
+package com.test;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+
+public class CSVReaderUsingSET {
+	public static void main(String[] args) throws Exception {
+
+        String firstFilePath = "C:/Users/u591281/PROJECT DOCS/RDMProjects_Docs/sampleReq-Resp Files/Export_CD_SET_VL_09142017.csv";
+        String secondFilePath = "C:/Users/u591281/PROJECT DOCS/RDMProjects_Docs/sampleReq-Resp Files/Export_CD_SET_VL_09142017.csv";
+//        String secondFilePath = "C:/Users/u591281/MuleCreatedFiles/CompareFiles/Export_CD_SET_VL_09142017.csv";
+//        String secondFilePath = "C:/Users/u591281/MuleCreatedFiles/Export_CD_SET_VL_10042017.csv";
+        String cvsSplitBy = "|";
+
+        Map<String,String> mapOne = readFile(firstFilePath,cvsSplitBy);
+        Map<String,String> mapTwo = readFile(secondFilePath,cvsSplitBy);
+        
+        System.out.println("map.equals() :::"+mapOne.equals(mapTwo));
+        
+        compareFiles(mapOne,mapTwo);
+        
+        System.out.println("Completed!.............Both files are matching.......");
+    }
+	
+
+	private static void compareFiles(Map<String, String> mapOne, Map<String, String> mapTwo) {
+		System.out.println(mapOne.size()+":::::::"+mapTwo.size());
+		
+		if ((mapOne == null || mapTwo == null) || (mapOne.isEmpty() || mapTwo.isEmpty()) ){
+	    	System.out.println("provided maps are null.");
+	    }
+		int countOne = 0;
+		for (String mapOneKey : mapOne.keySet()) {
+			if (!mapTwo.containsKey(mapOneKey)) {
+				countOne++;
+				//System.out .println("Map2 does not contains Record which is in Map1 :: " + mapOne.get(mapOneKey));
+			}
+		}
+		int countTwo = 0;
+		for (String mapTwoKey : mapTwo.keySet()) {
+			if (!mapOne.containsKey(mapTwoKey)) {
+				//System.out .println("Map2 contains extra records than Map1 :: " + mapTwo.get(mapTwoKey));
+				countTwo++;
+			}
+		}
+		System.out.println(countOne +"::::"+countTwo);
+		
+	}
+
+
+	private static Map<String,String> readFile(String filePath,String cvsSplitBy) throws Exception{
+		String line;
+		Map<String,String> map = new HashMap<String,String>();
+        	//Read file one and save it in Map
+			BufferedReader brOne = new BufferedReader(new FileReader(filePath));
+        	List<String>lineListOne = new ArrayList<String>();
+            while ((line = brOne.readLine()) != null) {
+                lineListOne.add(line);
+            }
+            for (String fileOneRecord : lineListOne) {
+            	 String[] result = fileOneRecord.split("\\|");
+            	 StringBuilder sb = new StringBuilder();
+                 for (int i = 0; i < result.length; i++) {
+                	 sb.append(result[i]);
+     			}
+                 map.put(sb.toString(), fileOneRecord);
+			}
+            return map;
+	}
+}
